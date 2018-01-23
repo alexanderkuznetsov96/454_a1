@@ -1,0 +1,125 @@
+CISC 454 Assignment 1 - Lunar Lander
+
+You will implement a lunar lander game by extending the skeleton code
+provided in this directory.
+
+
+Compile the code
+----------------
+
+On Linux:
+
+  Execute 'make'.
+
+  If this fails, you may need to download and compile the glfw library.
+
+On Windows with Visual Studio:
+
+  Click on a1.sln.
+  Beside the 'Debug' box, select 'x86'.
+  Press F7.
+
+
+Run the code
+------------
+
+Run the code and verify that a window pops up with a landscape
+drawn in green and a title.
+
+
+Read the code
+-------------
+
+Read *all* of the code to get a general understanding of it.  This
+should take an hour and will help a great deal later on.
+
+
+Modify the code
+---------------
+
+All modifications are done in places with a comment saying "YOUR CODE
+HERE":
+
+1. Modify World::draw() to calculate a transform for a zoomed view.
+   [1 mark]
+
+2. Modify Landscape::findClosestPoint() to compute the point on a segment
+   that is closest to a given point. [1 mark]
+
+3. Modify Lander::setupVAO() to set up the VAO that defines the lander
+   segments. [1 mark]
+
+4. Modify Lander::draw() to draw the lander in the correct position and
+   orientation. [1 mark]
+
+5. Modify Lander::addThrust() to change the lander velocity.  Use
+   THRUST_ACCEL and the current lander orientation. [1 mark]
+
+6. Modify World::draw() to output text that shows the same information as
+   the original lunar lander game (search Google Images for this).  There
+   are six pieces of information: score, time, fuel, altitude (above the
+   closest ground directly below), horizontal speed (with an arrow), and
+   vertical speed (with an arrow). [1 mark]
+
+   You will need another function to calculate your altitude by finding
+   which landscape segment the lander is above, and calculating the
+   distance from the *bottom* of the lander to that segment. [2 marks]
+
+   You will need to maintain the amount of fuel, and decrease it in
+   proportion to thrust (differently for main thrust and rotational
+   thrust). [1 mark]
+
+7. Modify World::updateState() to check for landing or collision.
+   Landing is successful if the vertical speed is less than 1 m/s and
+   the horizontal speed is less than 0.5 m/s.  Perform some action so
+   that the player knows whether the landing was successful, and award
+   points.  [3 marks]
+
+8. Optionally, implement additional features.  Up to [2 bonus marks]
+   can be awarded for additional features.  Simple features will not
+   get any marks.  Programs with exceptional features will be selected
+   to be shown to the class.
+
+9. Make sure that the code compiles and runs on the CasLab Linux
+   machines.  We will use these machines to compile, run, and mark the
+   programs.
+
+
+Submit the code
+---------------
+
+Create a NEW DIRECTORY called 'a1'.
+
+COPY ONLY THESE FILES into that directory:
+
+   *.cpp
+   *.h
+   *.vert
+   *.frag
+   Makefile     (only if you are building on Linux)
+   README.txt   (must contain the names, emails, student IDs of each
+                person, and *may* contain comments you have for the TA,
+                such as a description of extra modifications you made.)
+
+Do not include other files and directories.  In particular, DO NOT
+INCLUDE THESE:
+
+   .vs          (This is a HIDDEN directory.  DO NOT INCLUDE IT.)
+   A1.txt
+   a1.sln
+   a1.vcxproj
+   a1.vcxproj.filters
+   glad
+   include
+   lib32
+   lib64
+   libglfw.so
+   ll
+   resource.h
+
+   IF YOU INCLUDE ANY OTHER FILES, INCLUDING THE ONES DIRECTLY ABOVE, YOU
+   WILL LOSE 1 MARK!
+
+Create a zip archive of that directory, named 'a1.zip'.
+
+Email the archive to jstewart@cs.queensu.ca .
