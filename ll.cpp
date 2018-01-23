@@ -64,8 +64,8 @@ int main( int argc, char **argv )
     return 1;
   
   // Open window (ask for OpenGL ES 3.0 or better)
-
-  glfwWindowHint( GLFW_CLIENT_API, GLFW_OPENGL_ES_API );
+  // Sasha's computer requires GLFW_OPENGL_API here. Sam, you might need to change it to GLFW_OPENGL_ES_API to run on your computer.
+  glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
   glfwWindowHint( GLFW_CONTEXT_VERSION_MAJOR, 3 );
   glfwWindowHint( GLFW_CONTEXT_VERSION_MINOR, 0 );
 
