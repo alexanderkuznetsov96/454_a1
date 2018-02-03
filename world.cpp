@@ -128,5 +128,8 @@ void World::draw()
   time << s;
   drawStrokeString(time.str(), -0.95, 0.65, 0.06, glGetUniformLocation(myGPUProgram->id(), "MVP"));
 
+  ss.str(std::string());
+  ss << "FUEL " << lander->fuel();
+  drawStrokeString(ss.str(), -0.95, 0.55, 0.06, glGetUniformLocation(myGPUProgram->id(), "MVP"));
   // YOUR CODE HERE (modify the above code, too)
 }

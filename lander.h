@@ -9,6 +9,7 @@
 
 #include "headers.h"
 
+#define INITIAL_FUEL 1000
 
 class Lander {
 
@@ -25,11 +26,14 @@ class Lander {
 
   float worldMaxX, worldMaxY;	// world dimensions
 
+  int fuelLevel;
+
  public:
 
   Lander( float maxX, float maxY ) {
     worldMaxX = maxX;
     worldMaxY = maxY;
+	fuelLevel = INITIAL_FUEL;
     reset();
     setupVAO();
   };
@@ -55,6 +59,8 @@ class Lander {
   vec3 centrePosition() { return position; }
 
   float speed() { return velocity.length(); }
+
+  int fuel() { return fuelLevel; }
 };
 
 

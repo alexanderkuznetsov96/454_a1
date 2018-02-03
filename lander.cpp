@@ -145,8 +145,11 @@ void Lander::addThrust( float deltaT )
 
 {
   // YOUR CODE HERE
-	velocity.x -= THRUST_ACCEL*sin(orientation)*deltaT;
-	velocity.y += THRUST_ACCEL*cos(orientation)*deltaT;
+	if (fuelLevel > 0) {
+		velocity.x -= THRUST_ACCEL*sin(orientation)*deltaT;
+		velocity.y += THRUST_ACCEL*cos(orientation)*deltaT;
+		fuelLevel--;
+	}
 }
 
 
