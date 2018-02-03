@@ -78,9 +78,9 @@ void World::draw()
 
 	// Need to adjust the translate fucntions to translate around the lander
 	  worldToViewTransform
-		  = translate(-1, -1 + BOTTOM_SPACE, 0)
+		  = translate(0, BOTTOM_SPACE, 0)
 		  * scale(s, s, 1)
-		  * translate(-landscape->minX(), -landscape->minY(), 0);
+		  * translate(-lander->centrePosition().x, -lander->centrePosition().y, 0);
 
   }
 
