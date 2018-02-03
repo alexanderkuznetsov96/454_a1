@@ -42,7 +42,7 @@ void World::updateState( float elapsedTime )
   // YOUR CODE HERE
 }
 
-
+float zoomFactor = 2.0;
 
 void World::draw()
 
@@ -57,14 +57,21 @@ void World::draw()
     // the bottom of the landscape BOTTOM_SPACE above the bottom edge
     // of the screen (BOTTOM_SPACE is in viewing coordinates).
 
-    float s = 2.0 / (landscape->maxX() - landscape->minX());
+    float s = zoomFactor / (landscape->maxX() - landscape->minX());
 
-	worldToViewTransform
-		= translate(-1, -1 + BOTTOM_SPACE, 0)
-		* scale(s, s, 1)
-		* translate(-landscape->minX(), -landscape->minY(), 0);
-
-
+	if (zoomFactor > 2) {
+		zoomFactor -= 0.05;
+		worldToViewTransform
+			= translate(0, BOTTOM_SPACE, 0)
+			* scale(s, s, 1)
+			* translate(-lander->centrePosition().x, -lander->centrePosition().y, 0);
+	}
+	else {
+		worldToViewTransform
+			= translate(-1, -1 + BOTTOM_SPACE, 0)
+			* scale(s, s, 1)
+			* translate(-landscape->minX(), -landscape->minY(), 0);
+	}
   } else {
 
     // Find the world-to-view transform that is centred on the lander
@@ -73,8 +80,10 @@ void World::draw()
     // YOUR CODE HERE
 
 	  // Adjusting 2 will "Zoom" in and out
-
-	  float s = 4.0 / (landscape->maxX() - landscape->minX());
+	  if (zoomFactor < landscape->maxX()/ZOOM_RADIUS) {
+		  zoomFactor += 0.05;
+	  }
+	  float s = zoomFactor / (landscape->maxX() - landscape->minX());
 
 	// Need to adjust the translate fucntions to translate around the lander
 	  worldToViewTransform
