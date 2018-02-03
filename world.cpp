@@ -48,7 +48,7 @@ void World::draw()
 
 {
   mat4 worldToViewTransform;
-  zoomView = true;
+  //zoomView = true;
   if (!zoomView) {
 
     // Find the world-to-view transform that transforms the world

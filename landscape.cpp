@@ -118,8 +118,17 @@ vec3 Landscape::findClosestPoint( vec3 position, vec3 segTail, vec3 segHead )
   // range.
 
   // YOUR CODE HERE
-
-  return vec3(0,0,0);
+	vec3 s = vec3(segHead.x - segTail.x, segHead.y - segTail.y, 0);
+	vec3 S = 1 / sqrt(s.x*s.x + s.y*s.y) * s;
+	vec3 p = position - segTail; 
+	float a = p*S; 
+	if (a < 0) {
+		return segTail;
+	}
+	if (a > 0) {
+		return segHead;
+	}
+	return a*s + segTail;
 }
 
 
