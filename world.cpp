@@ -141,5 +141,18 @@ void World::draw()
   ss.precision(0);
   ss << "ALTIDUDE " << altitude;
   drawStrokeString(ss.str(), -0.95, 0.45, 0.06, glGetUniformLocation(myGPUProgram->id(), "MVP"));
+
+  ss.str(std::string());
+  int vx = lander->getVelocity().x;
+  ss << "HORIZONTAL SPEED " << abs(vx);
+  if (vx > 0) {
+	  // draw right arrow
+	  ss << " -> ";
+  }
+  else if (vx < 0) {
+	// draw left arrow
+	ss << " <- ";
+  }
+  drawStrokeString(ss.str(), -0.95, 0.35, 0.06, glGetUniformLocation(myGPUProgram->id(), "MVP"));
   // YOUR CODE HERE (modify the above code, too)
 }

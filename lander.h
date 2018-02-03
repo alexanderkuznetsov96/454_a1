@@ -62,6 +62,8 @@ class Lander {
 
   float speed() { return velocity.length(); }
 
+  vec3 getVelocity() { return velocity; }
+
   int fuel() { return fuelLevel; }
 
   vec3 getDimensions() { return landerDimensions; }
