@@ -48,7 +48,8 @@ void World::draw()
 
 {
   mat4 worldToViewTransform;
-
+  //cout << landscape->maxX();
+  //zoomView = true;
   if (!zoomView) {
 
     // Find the world-to-view transform that transforms the world
@@ -59,10 +60,11 @@ void World::draw()
 
     float s = 2.0 / (landscape->maxX() - landscape->minX());
 
-    worldToViewTransform
-      = translate( -1, -1 + BOTTOM_SPACE, 0 )
-      * scale( s, s, 1 )
-      * translate( -landscape->minX(), -landscape->minY(), 0 );
+	worldToViewTransform
+		= translate(-1, -1 + BOTTOM_SPACE, 0)
+		* scale(s, s, 1)
+		* translate(-landscape->minX(), -landscape->minY(), 0);
+
 
   } else {
 
@@ -70,6 +72,24 @@ void World::draw()
     // and is ZOOM_WIDTH wide (in world coordinates).
 
     // YOUR CODE HERE
+
+	  // Adjusting 2 will "Zoom" in and out
+
+	  float s = 4.0 / (landscape->maxX() - landscape->minX());
+
+
+	  vec3 position = lander->centrePosition();
+
+	  // Need to change from pixel coordinates to world coordinates
+	  float x = position.x/(landscape->maxX()/2)-1;
+	  float y = position.y/ (landscape->maxX() / 2) - 1;
+
+	// Need to adjust the translate fucntions to translate around the lander
+	  worldToViewTransform
+		  = translate(x, y + BOTTOM_SPACE, 0)
+		  * scale(s, s, 1)
+		  * translate(-landscape->minX(), -landscape->minY(), 0);
+
   }
 
   // Draw the landscape and lander, passing in the worldToViewTransform

@@ -32,7 +32,7 @@ void Lander::setupVAO()
 
   vec3 min = vec3( landerVerts[0], landerVerts[1], 0 );
   vec3 max = vec3( landerVerts[0], landerVerts[1], 0 );
-
+  numSegments = 0;
   int i;
   for (i=0; landerVerts[i] != -1; i+=2) {
     vec3 v( landerVerts[i], landerVerts[i+1], 0 );
@@ -40,6 +40,7 @@ void Lander::setupVAO()
     if (v.x > max.x) max.x = v.x;
     if (v.y < min.y) min.y = v.y;
     if (v.y > max.y) max.y = v.y;
+	numSegments++;
   }
 
   numSegments = i/2;		// number of segments in the lander model
@@ -51,9 +52,10 @@ void Lander::setupVAO()
   // in a coordinate system with y increasing downward.
   
 
-  float s = LANDER_WIDTH / (max.x - min.x);
+  float s = 4* LANDER_WIDTH / (max.x - min.x);
  
   mat4 modelToOriginTransform = scale( s, -s, 1 ) * translate( -(min.x+max.x)/2, -(min.y+max.y)/2, 0 );
+ // mat4 modelToOriginTransform = scale(s, -s, 1) * translate(-(min.x + max.x)/4, -(min.y + max.y)/2, 0);
 
   for (int i=0; landerVerts[i] != -1; i+=2) {
     vec4 newV = modelToOriginTransform * vec4( landerVerts[i], landerVerts[i+1], 0.0, 1.0 );
@@ -64,6 +66,18 @@ void Lander::setupVAO()
   // ---- Create a VAO for this object ----
 
   // YOUR CODE HERE
+  
+
+  glGenVertexArrays(1, &VAO);
+  glBindVertexArray(VAO);
+
+  GLuint VBO;
+  glGenBuffers(1, &VBO);
+  glBindBuffer(GL_ARRAY_BUFFER, VBO);
+  glBufferData(GL_ARRAY_BUFFER, 2 * numSegments * sizeof(float), &landerVerts[0], GL_STATIC_DRAW);
+
+  glEnableVertexAttribArray(0);
+  glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
 }
 
 
@@ -74,6 +88,18 @@ void Lander::draw( mat4 &worldToViewTransform )
 
 {
   // YOUR CODE HERE
+	cout << position.x << ", " << position.y << "\n";
+	worldToViewTransform = translate(position.x, position.y, 0) *  worldToViewTransform;
+	glBindVertexArray(VAO);
+
+	glUniformMatrix4fv(glGetUniformLocation(myGPUProgram->id(), "LAND"), 1, GL_TRUE, &worldToViewTransform[0][0]);
+
+	glLineWidth(2.0);
+
+	glDrawArrays(GL_LINES, 0, numSegments);
+
+
+
 }
 
 
