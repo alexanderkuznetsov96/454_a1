@@ -28,6 +28,8 @@ class Lander {
 
   int fuelLevel;
 
+  vec3 landerDimensions;
+
  public:
 
   Lander( float maxX, float maxY ) {
@@ -61,6 +63,8 @@ class Lander {
   float speed() { return velocity.length(); }
 
   int fuel() { return fuelLevel; }
+
+  vec3 getDimensions() { return landerDimensions; }
 };
 
 

@@ -136,7 +136,6 @@ vec3 Landscape::findClosestPoint( vec3 position, vec3 segTail, vec3 segHead )
 //
 // This is very inefficiently done.
 
-
 vec3 Landscape::findClosestPoint( vec3 position )
 
 {
@@ -158,6 +157,27 @@ vec3 Landscape::findClosestPoint( vec3 position )
   }
 
   return closestPoint;
+}
+
+int Landscape::findLanderAltitude(vec3 centerPosition, int landerHeight) {
+
+	for (int i = 0; i < numVerts - 1; i++) {
+		int xstart = landscapeVerts[2 * i];
+		int xend = landscapeVerts[2 * (i + 1)];
+		if (centerPosition.x > xstart && centerPosition.x < xend) {
+			// lander is above segment
+			// find y for this x
+			int ystart = landscapeVerts[2 * i + 1];
+			int yend = landscapeVerts[2 * (i + 1) + 1];
+			int y = (yend - ystart) / (xend - xstart) * (centerPosition.x - xstart) + ystart;
+			int altitude = centerPosition.y - landerHeight*0.7 - y;
+			if (altitude < 0) {
+				altitude = -1;
+			}
+			return centerPosition.y - landerHeight/2 - y;
+		}
+	}
+	return -1;
 }
 
 

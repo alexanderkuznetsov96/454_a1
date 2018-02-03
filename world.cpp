@@ -10,6 +10,7 @@
 #include <sstream>
 
 float gameTime = 0;
+float altitude = 0;
 void World::updateState( float elapsedTime )
 
 {
@@ -40,6 +41,7 @@ void World::updateState( float elapsedTime )
   zoomView = (closestDistance < ZOOM_RADIUS);
 
   // Check for landing or collision and let the user know
+  altitude = landscape->findLanderAltitude(lander->centrePosition(), lander->getDimensions().y);
 
   // YOUR CODE HERE
 }
@@ -129,7 +131,15 @@ void World::draw()
   drawStrokeString(time.str(), -0.95, 0.65, 0.06, glGetUniformLocation(myGPUProgram->id(), "MVP"));
 
   ss.str(std::string());
-  ss << "FUEL " << lander->fuel();
+  ss << "FUEL ";
+  for (int i = INITIAL_FUEL; i >= 1; i /= 10) {
+	  ss << (lander->fuel() % (i*10)) / i;
+  }
   drawStrokeString(ss.str(), -0.95, 0.55, 0.06, glGetUniformLocation(myGPUProgram->id(), "MVP"));
+
+  ss.str(std::string());
+  ss.precision(0);
+  ss << "ALTIDUDE " << altitude;
+  drawStrokeString(ss.str(), -0.95, 0.45, 0.06, glGetUniformLocation(myGPUProgram->id(), "MVP"));
   // YOUR CODE HERE (modify the above code, too)
 }

@@ -19,8 +19,6 @@
 #define GRAVITY vec3( 0, -1.6, 0 ) // gravity acceleration on the moon is 1.6 m/s/s
 #define LANDER_WIDTH 6.7                  // the real lander is about 6.7 m wide
 
-extern Landscape landscape;
-
 // Set up the lander by creating a VAO and rewriting the lander
 // vertices so that the lander is centred at (0,0).
 
@@ -43,7 +41,7 @@ void Lander::setupVAO()
     if (v.y > max.y) max.y = v.y;
 	numSegments++;
   }
-
+  landerDimensions = max - min;
   numSegments = i/2;		// number of segments in the lander model
 
   // Rewrite the model vertices so that the lander is centred at (0,0)
@@ -130,14 +128,20 @@ void Lander::updatePose( float deltaT )
 void Lander::rotateCW( float deltaT )
 
 {
-  orientation -= ROTATION_SPEED * deltaT;
+	if (fuelLevel > 0) {
+		orientation -= ROTATION_SPEED * deltaT;
+		fuelLevel--;
+  }
 }
 
 
 void Lander::rotateCCW( float deltaT )
 
 {
-  orientation += ROTATION_SPEED * deltaT;
+	if (fuelLevel > 0) {
+		orientation += ROTATION_SPEED * deltaT;
+		fuelLevel--;
+	}
 }
 
 
