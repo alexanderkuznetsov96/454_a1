@@ -92,7 +92,7 @@ void Lander::draw( mat4 &worldToViewTransform )
 	float x = position.x;
 	float y = position.y;
 	cout << x << ", " << y << "\n";
-	worldToViewTransform = worldToViewTransform * translate(x, y, 0);
+	worldToViewTransform = worldToViewTransform * translate(x, y, 0) * rotate(orientation, vec3(0,0,1));
 	glBindVertexArray(VAO);
 
 	glUniformMatrix4fv(glGetUniformLocation(myGPUProgram->id(), "MVP"), 1, GL_TRUE, &worldToViewTransform[0][0]);
@@ -145,7 +145,7 @@ void Lander::addThrust( float deltaT )
 
 {
   // YOUR CODE HERE
-	velocity.x += THRUST_ACCEL*sin(orientation)*deltaT;
+	velocity.x -= THRUST_ACCEL*sin(orientation)*deltaT;
 	velocity.y += THRUST_ACCEL*cos(orientation)*deltaT;
 }
 
