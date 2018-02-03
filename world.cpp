@@ -48,15 +48,6 @@ void World::draw()
 
 {
   mat4 worldToViewTransform;
-  mat4 worldToViewTransform2;
-  float s = 2.0 / (landscape->maxX() - landscape->minX());
-
-  worldToViewTransform
-	  = translate(-1, -1 + BOTTOM_SPACE, 0)
-	  * scale(s, s, 1)
-	  * translate(-landscape->minX(), -landscape->minY(), 0);
-
-  //cout << landscape->maxX();
   zoomView = true;
   if (!zoomView) {
 
@@ -83,18 +74,11 @@ void World::draw()
 
 	  // Adjusting 2 will "Zoom" in and out
 
-	  float s = 2.0 / (landscape->maxX() - landscape->minX());
-
-
-	  vec3 position = lander->centrePosition();
-
-	  // Need to change from pixel coordinates to world coordinates
-	  float x = position.x/(landscape->maxX()/2)-1;
-	  float y = position.y/ (landscape->maxX() / 2) - 1;
+	  float s = 4.0 / (landscape->maxX() - landscape->minX());
 
 	// Need to adjust the translate fucntions to translate around the lander
-	  worldToViewTransform2
-		  = translate(x, y + BOTTOM_SPACE, 0)
+	  worldToViewTransform
+		  = translate(-1, -1 + BOTTOM_SPACE, 0)
 		  * scale(s, s, 1)
 		  * translate(-landscape->minX(), -landscape->minY(), 0);
 
@@ -103,8 +87,8 @@ void World::draw()
   // Draw the landscape and lander, passing in the worldToViewTransform
   // so that they can append their own transforms before passing the
   // complete transform to the vertex shader.
-  lander->draw(worldToViewTransform2);
-  landscape->draw( worldToViewTransform );
+  landscape->draw( worldToViewTransform);
+  lander->draw(worldToViewTransform);
   
 
   // Draw the heads-up display (i.e. all text).

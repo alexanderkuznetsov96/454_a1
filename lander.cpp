@@ -19,6 +19,7 @@
 #define GRAVITY vec3( 0, -1.6, 0 ) // gravity acceleration on the moon is 1.6 m/s/s
 #define LANDER_WIDTH 6.7                  // the real lander is about 6.7 m wide
 
+extern Landscape landscape;
 
 // Set up the lander by creating a VAO and rewriting the lander
 // vertices so that the lander is centred at (0,0).
@@ -88,9 +89,10 @@ void Lander::draw( mat4 &worldToViewTransform )
 
 {
   // YOUR CODE HERE
-	//cout << position.x << ", " << position.y << "\n";
-	//cout << %worldToViewTransform;
-	//worldToViewTransform = translate(position.x, position.y, 0) * worldToViewTransform;
+	float x = position.x;
+	float y = position.y;
+	cout << x << ", " << y << "\n";
+	worldToViewTransform = worldToViewTransform * translate(x, y, 0);
 	glBindVertexArray(VAO);
 
 	glUniformMatrix4fv(glGetUniformLocation(myGPUProgram->id(), "MVP"), 1, GL_TRUE, &worldToViewTransform[0][0]);
