@@ -88,16 +88,16 @@ void Lander::draw( mat4 &worldToViewTransform )
 
 {
   // YOUR CODE HERE
-	cout << position.x << ", " << position.y << "\n";
-	worldToViewTransform = translate(position.x, position.y, 0) *  worldToViewTransform;
+	//cout << position.x << ", " << position.y << "\n";
+	//cout << %worldToViewTransform;
+	//worldToViewTransform = translate(position.x, position.y, 0) * worldToViewTransform;
 	glBindVertexArray(VAO);
 
-	glUniformMatrix4fv(glGetUniformLocation(myGPUProgram->id(), "LAND"), 1, GL_TRUE, &worldToViewTransform[0][0]);
+	glUniformMatrix4fv(glGetUniformLocation(myGPUProgram->id(), "MVP"), 1, GL_TRUE, &worldToViewTransform[0][0]);
 
 	glLineWidth(2.0);
 
 	glDrawArrays(GL_LINES, 0, numSegments);
-
 
 
 }
