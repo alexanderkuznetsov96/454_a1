@@ -9,10 +9,12 @@
 
 #include <sstream>
 
-
+float gameTime = 0;
 void World::updateState( float elapsedTime )
 
 {
+	gameTime += elapsedTime;
+
   // See if any keys are pressed for thrust
 
   if (glfwGetKey( window, GLFW_KEY_RIGHT ) == GLFW_PRESS) // right arrow
@@ -111,6 +113,20 @@ void World::draw()
 
   ss << "SPEED " << lander->speed() << " m/s";
   drawStrokeString( ss.str(), -0.95, 0.75, 0.06, glGetUniformLocation( myGPUProgram->id(), "MVP") );
+
+  int m = (int)(gameTime / 60);
+  int s = (int)gameTime % 60;
+  stringstream time;
+  time << "TIME ";
+  if (m < 10) {
+	  time << "0";
+  }
+  time << m << ":";
+  if (s < 10) {
+	  time << "0";
+  }
+  time << s;
+  drawStrokeString(time.str(), -0.95, 0.65, 0.06, glGetUniformLocation(myGPUProgram->id(), "MVP"));
 
   // YOUR CODE HERE (modify the above code, too)
 }

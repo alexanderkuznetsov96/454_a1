@@ -91,7 +91,7 @@ void Lander::draw( mat4 &worldToViewTransform )
   // YOUR CODE HERE
 	float x = position.x;
 	float y = position.y;
-	cout << x << ", " << y << "\n";
+	//cout << x << ", " << y << "\n";
 	worldToViewTransform = worldToViewTransform * translate(x, y, 0) * rotate(orientation, vec3(0,0,1));
 	glBindVertexArray(VAO);
 
