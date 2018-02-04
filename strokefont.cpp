@@ -17,7 +17,7 @@
 #include "fg_stroke.h" 
 
 
-void drawStrokeString( string str, float x, float y, float height, GLint transformLocation )
+void drawStrokeString( string str, float x, float y, float height, GLint transformLocation, float theta)
 
 {
   float s = height / (float) fgStrokeMonoRoman.Height; // scale of letters
@@ -29,7 +29,8 @@ void drawStrokeString( string str, float x, float y, float height, GLint transfo
 
     mat4 transform
       = translate( xPos, y, 0 )
-      * scale( s, s, 1 );
+      * scale( s, s, 1 )
+	  * rotate(theta, vec3(0,0,1));
 
     glUniformMatrix4fv( transformLocation, 1, GL_TRUE, &transform[0][0] );
 

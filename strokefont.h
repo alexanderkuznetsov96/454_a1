@@ -8,7 +8,7 @@
 #include "headers.h"
 #include <string>
 
-void drawStrokeString( string str, float x, float y, float height, GLint transformLocation );
+void drawStrokeString( string str, float x, float y, float height, GLint transformLocation, float theta = 0);
 
 
 // The stroke font structures

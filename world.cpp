@@ -145,27 +145,32 @@ void World::draw()
   ss.str(std::string());
   int vx = lander->getVelocity().x;
   ss << "HORIZONTAL SPEED " << abs(vx);
+  drawStrokeString(ss.str(), -0.95, 0.35, 0.06, glGetUniformLocation(myGPUProgram->id(), "MVP"));
+  ss.str("\a");
+  float theta = 0;
   if (vx > 0) {
 	  // draw right arrow
-	  ss << " -> ";
+	  theta = 0;
   }
   else if (vx < 0) {
 	// draw left arrow
-	ss << " <- ";
+	  theta = 3.14;
   }
-  drawStrokeString(ss.str(), -0.95, 0.35, 0.06, glGetUniformLocation(myGPUProgram->id(), "MVP"));
+  drawStrokeString(ss.str(), 0, 0.35, 0.06, glGetUniformLocation(myGPUProgram->id(), "MVP"), theta);
 
   ss.str(std::string());
   int vy = lander->getVelocity().y;
   ss << "VERTICAL SPEED " << abs(vy);
+  drawStrokeString(ss.str(), -0.95, 0.25, 0.06, glGetUniformLocation(myGPUProgram->id(), "MVP"));
+  ss.str("->");
   if (vy > 0) {
 	  // draw down arrow
-	  ss << " down ";
+	  theta = -3.14/2;
   }
   else if (vy < 0) {
 	  // draw up arrow
-	  ss << " ^ ";
+	  theta = 3.14 / 2;
   }
-  drawStrokeString(ss.str(), -0.95, 0.25, 0.06, glGetUniformLocation(myGPUProgram->id(), "MVP"));
+  drawStrokeString(ss.str(), 0, 0.25, 0.06, glGetUniformLocation(myGPUProgram->id(), "MVP"), theta);
   // YOUR CODE HERE (modify the above code, too)
 }

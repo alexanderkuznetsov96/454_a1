@@ -30,6 +30,30 @@
 
 #include "strokefont.h"
 
+/* char: 0x07 */
+static const SFG_StrokeVertex ch7st0[] =
+{
+	{ 52.381f,100.0f },
+	{ 52.381f,33.3333f }
+};
+
+static const SFG_StrokeVertex ch7st1[] =
+{
+	{ 52.381f,9.5238f },
+	{ 47.6191f,4.7619f },
+	{ 52.381f,0.0f },
+	{ 57.1429f,4.7619f },
+	{ 52.381f,9.5238f }
+};
+
+static const SFG_StrokeStrip ch7st[] =
+{
+	{ 2,ch7st0 },
+	{ 5,ch7st1 }
+};
+
+static const SFG_StrokeChar ch7 = { 104.762f,2,ch7st };
+
 /* char: 0x20 */
 
 static const SFG_StrokeStrip ch32st[] =
@@ -2827,7 +2851,7 @@ static const SFG_StrokeChar ch127 = {104.762f,2,ch127st};
 
 static const SFG_StrokeChar *chars[] =
 {
- 0, 0, 0, 0, 0, 0, 0, 0,
+ 0, 0, 0, 0, 0, 0, 0, &ch7,
  0, 0, 0, 0, 0, 0, 0, 0,
  0, 0, 0, 0, 0, 0, 0, 0,
  0, 0, 0, 0, 0, 0, 0, 0,
