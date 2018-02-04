@@ -9,6 +9,8 @@
 
 #include <sstream>
 
+#define M_PI 3.1415926535897932384626433832795
+
 float gameTime = 0;
 float altitude = 0;
 void World::updateState( float elapsedTime )
@@ -132,7 +134,7 @@ void World::draw()
 
   ss.str(std::string());
   ss << "FUEL ";
-  for (int i = INITIAL_FUEL; i >= 1; i /= 10) {
+  for (int i = 1000; i >= 1; i /= 10) {
 	  ss << (lander->fuel() % (i*10)) / i;
   }
   drawStrokeString(ss.str(), -0.95, 0.55, 0.06, glGetUniformLocation(myGPUProgram->id(), "MVP"));
@@ -150,11 +152,14 @@ void World::draw()
   float theta = 0;
   if (vx > 0) {
 	  // draw right arrow
-	  theta = 0;
+	  theta = -M_PI/2;
   }
   else if (vx < 0) {
 	// draw left arrow
-	  theta = 3.14;
+	  theta = M_PI/2;
+  }
+  else {
+	  ss.str(std::string());
   }
   drawStrokeString(ss.str(), 0, 0.35, 0.06, glGetUniformLocation(myGPUProgram->id(), "MVP"), theta);
 
@@ -162,14 +167,17 @@ void World::draw()
   int vy = lander->getVelocity().y;
   ss << "VERTICAL SPEED " << abs(vy);
   drawStrokeString(ss.str(), -0.95, 0.25, 0.06, glGetUniformLocation(myGPUProgram->id(), "MVP"));
-  ss.str("->");
+  ss.str("\a");
   if (vy > 0) {
 	  // draw down arrow
-	  theta = -3.14/2;
+	  theta = 0;
   }
   else if (vy < 0) {
 	  // draw up arrow
-	  theta = 3.14 / 2;
+	  theta = M_PI;
+  }
+  else {
+	  ss.str(std::string());
   }
   drawStrokeString(ss.str(), 0, 0.25, 0.06, glGetUniformLocation(myGPUProgram->id(), "MVP"), theta);
   // YOUR CODE HERE (modify the above code, too)

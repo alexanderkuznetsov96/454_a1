@@ -9,7 +9,7 @@
 
 #include "headers.h"
 
-#define INITIAL_FUEL 1000
+#define INITIAL_FUEL 9999
 
 class Lander {
 
