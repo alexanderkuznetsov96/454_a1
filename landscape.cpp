@@ -125,7 +125,7 @@ vec3 Landscape::findClosestPoint( vec3 position, vec3 segTail, vec3 segHead )
 	if (a < 0) {
 		return segTail;
 	}
-	if (a > 0) {
+	if (a > 1) {
 		return segHead;
 	}
 	return a*s + segTail;
