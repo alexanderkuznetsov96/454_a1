@@ -8,9 +8,9 @@
 #include "strokefont.h"
 
 #include <sstream>
-
+// defining pi
 #define M_PI 3.1415926535897932384626433832795
-
+// Global variables for game use
 float gameTime = 0;
 float altitude = 0;
 int score = 0;
@@ -23,8 +23,9 @@ bool printResult = false;
 
 void World::updateState(float elapsedTime)
 
-{
+{	// Checking if the game is currently running
 	if (gameRunning) {
+		// Increment the time counter
 		gameTime += elapsedTime;
 
 		// See if any keys are pressed for thrust
@@ -53,7 +54,9 @@ void World::updateState(float elapsedTime)
 
 		// Check for landing or collision and let the user know
 		int segmentIndex = landscape->findSegmentBelow(lander->centrePosition());
+		// Getting the altitude for current position
 		altitude = landscape->findLanderAltitude(segmentIndex, lander->centrePosition(), lander->getDimensions().y);
+		// Check if altitude is close enough to land
 		if (abs(altitude) < 10e-2) {
 			// check speed
 			vec3 v = lander->getVelocity();

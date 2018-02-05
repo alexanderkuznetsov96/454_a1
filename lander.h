@@ -8,7 +8,7 @@
 
 
 #include "headers.h"
-
+// Default fuel is set to 9999 for multi game use
 #define INITIAL_FUEL 9999
 
 class Lander {
@@ -65,14 +65,15 @@ class Lander {
 
   float speed() { return velocity.length(); }
 
+  // Method for getting the velocity vector
   vec3 getVelocity() { return velocity; }
-
+  // Method to stop the lander
   void stopLander() { velocity = vec3(0, 0, 0); }
-
+  // Method to get the fuel level
   int fuel() { return fuelLevel; }
-
+  // Method to get the dimensions 
   vec3 getDimensions() { return landerDimensions; }
-
+  // Method to get the orientation of the lander
   float getOrientation() { return orientation; }
 };
 

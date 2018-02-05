@@ -66,7 +66,7 @@ void Lander::setupVAO()
   // ---- Create a VAO for this object ----
 
   // YOUR CODE HERE
-  
+  // This simply is pushing the VAO onto the GPU by giving it the number of segments and the lander verticies
 
   glGenVertexArrays(1, &VAO);
   glBindVertexArray(VAO);
@@ -87,18 +87,16 @@ void Lander::draw( mat4 &worldToViewTransform )
 
 {
   // YOUR CODE HERE
+	// Get the position of the lander
 	float x = position.x;
 	float y = position.y;
-	//cout << x << ", " << y << "\n";
+	// Translate the lander to the correct coordinates in the world
 	worldToViewTransform = worldToViewTransform * translate(x, y, 0) * rotate(orientation, vec3(0,0,1));
+	// Push the VAO to the GUP with it's transformation
 	glBindVertexArray(VAO);
-
 	glUniformMatrix4fv(glGetUniformLocation(myGPUProgram->id(), "MVP"), 1, GL_TRUE, &worldToViewTransform[0][0]);
-
 	glLineWidth(2.0);
-
 	glDrawArrays(GL_LINES, 0, numSegments);
-
 
 }
 
@@ -128,6 +126,7 @@ void Lander::updatePose( float deltaT )
 void Lander::rotateCW( float deltaT )
 
 {
+	// Adjust the fuel level as it rotates
 	if (fuelLevel > 0) {
 		orientation -= ROTATION_SPEED * deltaT;
 		fuelLevel--;
@@ -138,6 +137,7 @@ void Lander::rotateCW( float deltaT )
 void Lander::rotateCCW( float deltaT )
 
 {
+	// Adjust the fuel level as it rotates
 	if (fuelLevel > 0) {
 		orientation += ROTATION_SPEED * deltaT;
 		fuelLevel--;
@@ -149,6 +149,8 @@ void Lander::addThrust( float deltaT )
 
 {
   // YOUR CODE HERE
+  // Adjust the fuel level as it thrusts
+
 	if (fuelLevel > 0) {
 		velocity.x -= THRUST_ACCEL*sin(orientation)*deltaT;
 		velocity.y += THRUST_ACCEL*cos(orientation)*deltaT;
