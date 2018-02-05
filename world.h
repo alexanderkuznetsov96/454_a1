@@ -34,6 +34,16 @@ class World {
 
   void updateState( float elapsedTime );
 
+  void SoftReset();
+
+  void HardReset();
+
+  void GameWin();
+
+  void GameOver(string reason);
+
+  void RenderScore();
+
   void resetLander() {
     lander->reset();
   }

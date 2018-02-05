@@ -13,64 +13,144 @@
 
 float gameTime = 0;
 float altitude = 0;
-void World::updateState( float elapsedTime )
+int score = 0;
+int startfuel = INITIAL_FUEL;
+float zoomFactor = 2.0;
+bool gameRunning = true;
+bool gameWin = false;
+bool printResult = false;
+
+
+void World::updateState(float elapsedTime)
 
 {
-	gameTime += elapsedTime;
+	if (gameRunning) {
+		gameTime += elapsedTime;
 
-  // See if any keys are pressed for thrust
+		// See if any keys are pressed for thrust
 
-  if (glfwGetKey( window, GLFW_KEY_RIGHT ) == GLFW_PRESS) // right arrow
-    lander->rotateCW( elapsedTime );
+		if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) // right arrow
+			lander->rotateCW(elapsedTime);
 
-  if (glfwGetKey( window, GLFW_KEY_LEFT ) == GLFW_PRESS) // left arrow
-    lander->rotateCCW( elapsedTime );
+		if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) // left arrow
+			lander->rotateCCW(elapsedTime);
 
-  if (glfwGetKey( window, GLFW_KEY_DOWN ) == GLFW_PRESS) // down arrow
-    lander->addThrust( elapsedTime );
+		if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) // down arrow
+			lander->addThrust(elapsedTime);
 
-  // Update the position and velocity
+		// Update the position and velocity
 
-  lander->updatePose( elapsedTime );
+		lander->updatePose(elapsedTime);
 
-  // See if the lander has touched the terrain
+		// See if the lander has touched the terrain
 
-  vec3 closestTerrainPoint = landscape->findClosestPoint( lander->centrePosition() );
-  float closestDistance = ( closestTerrainPoint - lander->centrePosition() ).length();
+		vec3 closestTerrainPoint = landscape->findClosestPoint(lander->centrePosition());
+		float closestDistance = (closestTerrainPoint - lander->centrePosition()).length();
 
-  // Find if the view should be zoomed
+		// Find if the view should be zoomed
 
-  zoomView = (closestDistance < ZOOM_RADIUS);
+		zoomView = (closestDistance < ZOOM_RADIUS);
 
-  // Check for landing or collision and let the user know
-  int segmentIndex = landscape->findSegmentBelow(lander->centrePosition());
-  altitude = landscape->findLanderAltitude(segmentIndex, lander->centrePosition(), lander->getDimensions().y);
-  if (abs(altitude) < 10e-4) {
-	  // check speed
-	  vec3 v = lander->getVelocity();
-	  if (v.x < 0.5 && v.y < 1) {
-		  // check segment is flat and lander is contained
-		  if (landscape->isSegmentGoodToLand(segmentIndex, lander->getOrientation(), lander->centrePosition(), lander->getDimensions().x)) {
-			  cout << "Game win" << std::endl;
-			  lander->stopLander();
-		  }
-		  else {
-			  cout << "Game Over" << std::endl;
-		  }
-	  }
-	  else {
-		  // game over
-		  cout << "Game Over" << std::endl;
-	  }
-  }
-  else if (altitude < 0) {
-	  // game over
-	  cout << "Game Over" << std::endl;
-  }
-  // YOUR CODE HERE
+		// Check for landing or collision and let the user know
+		int segmentIndex = landscape->findSegmentBelow(lander->centrePosition());
+		altitude = landscape->findLanderAltitude(segmentIndex, lander->centrePosition(), lander->getDimensions().y);
+		if (abs(altitude) < 10e-2) {
+			// check speed
+			vec3 v = lander->getVelocity();
+			if (abs(v.x) < 0.5 && abs(v.y) < 1) {
+				// check segment is flat and lander is contained
+				int r = landscape->isSegmentGoodToLand(segmentIndex, lander->getOrientation(), lander->centrePosition(), lander->getDimensions().x);
+				if (r == 0) {
+					lander->stopLander();
+					GameWin();
+				}
+				else {
+					switch (r) {
+					case 1:
+						GameOver("You attempted to land on a segment that was not flat");
+						break;
+					case 2:
+					case 3:
+						GameOver("You did not fit on the surface");
+						break;
+					default:
+						GameOver("You crashed");
+						break;
+					}
+				}
+			}
+			else {
+				// game over
+				GameOver("You were moving too fast");
+			}
+		}
+		else if (altitude < 0) {
+			// game over
+			GameOver("You crashed");
+		}
+	}
+	else {
+		if (!printResult) {
+			startfuel = lander->fuel();
+
+			// display win screen
+			if (gameWin) {
+				cout << "Game Win" << std::endl;
+			}
+			// display loss screen
+			else {
+				cout << "Game Loss" << std::endl;
+			}
+			if (startfuel == 0) {
+				cout << "Out of fuel. Press 'n' to start new game." << std::endl;
+			}
+			else {
+				cout << "Press 's' to start new game. Press 'n' to start new game." << std::endl;
+			}
+			printResult = true;
+		}
+		
+		// wait for key
+		if (glfwGetKey(window, GLFW_KEY_N) == GLFW_PRESS) {
+			// start new game
+			HardReset();
+		}
+		else if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+			if (startfuel != 0) {
+				// continue
+				SoftReset();
+			}
+		}
+	}
+
 }
 
-float zoomFactor = 2.0;
+void World::SoftReset() {
+	zoomFactor = 2;
+	gameTime = 0;
+	lander->reset();
+	gameRunning = true;
+	printResult = false;
+}
+
+void World::HardReset() {
+	SoftReset();
+	score = 0;
+	gameTime = 0;
+	startfuel = INITIAL_FUEL;
+	lander->resetFuel();
+}
+
+void World::GameWin() {
+	gameRunning = false;
+	gameWin = true;
+	score += 300 - gameTime * 5 + 300 * (startfuel - lander->fuel()) / startfuel + 400 * lander->getDimensions().y / landscape->getSegmentWidth(landscape->findSegmentBelow(lander->centrePosition()));
+}
+
+void World::GameOver(string reason) {
+	gameRunning = false;
+	gameWin = false;
+}
 
 void World::draw()
 
@@ -137,7 +217,10 @@ void World::draw()
   ss.setf( ios::fixed, ios::floatfield );
   ss.precision(1);
 
-  ss << "SPEED " << lander->speed() << " m/s";
+  ss << "SCORE ";
+  for (int i = 1000; i >= 1; i /= 10) {
+	  ss << (score % (i * 10)) / i;
+  };
   drawStrokeString( ss.str(), -0.95, 0.75, 0.06, glGetUniformLocation( myGPUProgram->id(), "MVP") );
 
   int m = (int)(gameTime / 60);
@@ -162,14 +245,15 @@ void World::draw()
   drawStrokeString(ss.str(), -0.95, 0.55, 0.06, glGetUniformLocation(myGPUProgram->id(), "MVP"));
 
   ss.str(std::string());
-  ss.precision(0);
-  ss << "ALTIDUDE " << altitude;
-  drawStrokeString(ss.str(), -0.95, 0.45, 0.06, glGetUniformLocation(myGPUProgram->id(), "MVP"));
+  ss.precision(3);
+  ss << "ALTITUDE " << altitude;
+  drawStrokeString(ss.str(), -0.1, 0.75, 0.06, glGetUniformLocation(myGPUProgram->id(), "MVP"));
 
   ss.str(std::string());
-  int vx = lander->getVelocity().x;
+  ss.precision(1);
+  float vx = lander->getVelocity().x;
   ss << "HORIZONTAL SPEED " << abs(vx);
-  drawStrokeString(ss.str(), -0.95, 0.35, 0.06, glGetUniformLocation(myGPUProgram->id(), "MVP"));
+  drawStrokeString(ss.str(), -0.1, 0.65, 0.06, glGetUniformLocation(myGPUProgram->id(), "MVP"));
   ss.str("\a");
   float theta = 0;
   if (vx > 0) {
@@ -183,12 +267,12 @@ void World::draw()
   else {
 	  ss.str(std::string());
   }
-  drawStrokeString(ss.str(), 0, 0.35, 0.06, glGetUniformLocation(myGPUProgram->id(), "MVP"), theta);
+  drawStrokeString(ss.str(), 0.85, 0.65, 0.06, glGetUniformLocation(myGPUProgram->id(), "MVP"), theta);
 
   ss.str(std::string());
-  int vy = lander->getVelocity().y;
+  float vy = lander->getVelocity().y;
   ss << "VERTICAL SPEED " << abs(vy);
-  drawStrokeString(ss.str(), -0.95, 0.25, 0.06, glGetUniformLocation(myGPUProgram->id(), "MVP"));
+  drawStrokeString(ss.str(), -0.1, 0.55, 0.06, glGetUniformLocation(myGPUProgram->id(), "MVP"));
   ss.str("\a");
   if (vy > 0) {
 	  // draw down arrow
@@ -201,6 +285,6 @@ void World::draw()
   else {
 	  ss.str(std::string());
   }
-  drawStrokeString(ss.str(), 0, 0.25, 0.06, glGetUniformLocation(myGPUProgram->id(), "MVP"), theta);
+  drawStrokeString(ss.str(), 0.85, 0.55, 0.06, glGetUniformLocation(myGPUProgram->id(), "MVP"), theta);
   // YOUR CODE HERE (modify the above code, too)
 }

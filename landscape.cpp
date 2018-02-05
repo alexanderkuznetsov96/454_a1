@@ -167,10 +167,14 @@ int Landscape::findSegmentBelow(vec3 centerPosition) {
 			return i;
 		}
 	}
-	return -1;
+	return 0;
 }
 
-bool Landscape::isSegmentGoodToLand(int segmentIndex, float orientation, vec3 centerposition, float landerWidth) {
+float Landscape::getSegmentWidth(int segmentIndex) {
+	return landscapeVerts[2 * (segmentIndex + 1)] - landscapeVerts[2 * segmentIndex];
+}
+
+int Landscape::isSegmentGoodToLand(int segmentIndex, float orientation, vec3 centerposition, float landerWidth) {
 	if (abs(orientation) < 5 * 3.14 / 180) {
 		float ystart = landscapeVerts[2 * segmentIndex + 1];
 		float yend = landscapeVerts[2 * (segmentIndex + 1) + 1];
@@ -179,9 +183,18 @@ bool Landscape::isSegmentGoodToLand(int segmentIndex, float orientation, vec3 ce
 		if (ystart == yend) {
 			if (centerposition.x > xstart && centerposition.x < xend) {
 				if (centerposition.x + landerWidth / 2 < xend && centerposition.x - landerWidth / 2 > xstart) {
-					return true;
+					return 0;
+				}
+				else {
+					return 3;
 				}
 			}
+			else {
+				return 2;
+			}
+		}
+		else {
+			return 1;
 		}
 	}
 	return false;

@@ -35,10 +35,12 @@ class Lander {
   Lander( float maxX, float maxY ) {
     worldMaxX = maxX;
     worldMaxY = maxY;
-	fuelLevel = INITIAL_FUEL;
+	resetFuel();
     reset();
     setupVAO();
   };
+
+  void resetFuel() { fuelLevel = INITIAL_FUEL; }
 
   void setupVAO();  
 
