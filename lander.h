@@ -64,9 +64,13 @@ class Lander {
 
   vec3 getVelocity() { return velocity; }
 
+  void stopLander() { velocity = vec3(0, 0, 0); }
+
   int fuel() { return fuelLevel; }
 
   vec3 getDimensions() { return landerDimensions; }
+
+  float getOrientation() { return orientation; }
 };
 
 

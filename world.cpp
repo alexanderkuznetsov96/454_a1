@@ -43,8 +43,30 @@ void World::updateState( float elapsedTime )
   zoomView = (closestDistance < ZOOM_RADIUS);
 
   // Check for landing or collision and let the user know
-  altitude = landscape->findLanderAltitude(lander->centrePosition(), lander->getDimensions().y);
-
+  int segmentIndex = landscape->findSegmentBelow(lander->centrePosition());
+  altitude = landscape->findLanderAltitude(segmentIndex, lander->centrePosition(), lander->getDimensions().y);
+  if (abs(altitude) < 10e-4) {
+	  // check speed
+	  vec3 v = lander->getVelocity();
+	  if (v.x < 0.5 && v.y < 1) {
+		  // check segment is flat and lander is contained
+		  if (landscape->isSegmentGoodToLand(segmentIndex, lander->getOrientation(), lander->centrePosition(), lander->getDimensions().x)) {
+			  cout << "Game win" << std::endl;
+			  lander->stopLander();
+		  }
+		  else {
+			  cout << "Game Over" << std::endl;
+		  }
+	  }
+	  else {
+		  // game over
+		  cout << "Game Over" << std::endl;
+	  }
+  }
+  else if (altitude < 0) {
+	  // game over
+	  cout << "Game Over" << std::endl;
+  }
   // YOUR CODE HERE
 }
 

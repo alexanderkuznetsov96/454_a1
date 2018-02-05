@@ -40,7 +40,9 @@ class Landscape {
 
   vec3 findClosestPoint( vec3 position, vec3 segTail, vec3 segHead );
   vec3 findClosestPoint( vec3 position );
-  int findLanderAltitude(vec3 centerPosition, int landerHeight);
+  int findSegmentBelow(vec3 centerPosition);
+  float findLanderAltitude(int segmentIndex, vec3 centerPosition, float landerHeight);
+  bool isSegmentGoodToLand(int segmentIndex, float orientation, vec3 centerposition, float landerWidth);
 };
 
 

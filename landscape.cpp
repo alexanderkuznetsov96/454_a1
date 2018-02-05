@@ -159,25 +159,44 @@ vec3 Landscape::findClosestPoint( vec3 position )
   return closestPoint;
 }
 
-int Landscape::findLanderAltitude(vec3 centerPosition, int landerHeight) {
-
+int Landscape::findSegmentBelow(vec3 centerPosition) {
 	for (int i = 0; i < numVerts - 1; i++) {
 		int xstart = landscapeVerts[2 * i];
 		int xend = landscapeVerts[2 * (i + 1)];
 		if (centerPosition.x > xstart && centerPosition.x < xend) {
-			// lander is above segment
-			// find y for this x
-			int ystart = landscapeVerts[2 * i + 1];
-			int yend = landscapeVerts[2 * (i + 1) + 1];
-			int y = (yend - ystart) / (xend - xstart) * (centerPosition.x - xstart) + ystart;
-			int altitude = centerPosition.y - landerHeight*0.7 - y;
-			if (altitude < 0) {
-				altitude = -1;
-			}
-			return centerPosition.y - landerHeight/2 - y;
+			return i;
 		}
 	}
 	return -1;
+}
+
+bool Landscape::isSegmentGoodToLand(int segmentIndex, float orientation, vec3 centerposition, float landerWidth) {
+	if (abs(orientation) < 5 * 3.14 / 180) {
+		float ystart = landscapeVerts[2 * segmentIndex + 1];
+		float yend = landscapeVerts[2 * (segmentIndex + 1) + 1];
+		float xstart = landscapeVerts[2 * segmentIndex];
+		float xend = landscapeVerts[2 * (segmentIndex + 1)];
+		if (ystart == yend) {
+			if (centerposition.x > xstart && centerposition.x < xend) {
+				if (centerposition.x + landerWidth / 2 < xend && centerposition.x - landerWidth / 2 > xstart) {
+					return true;
+				}
+			}
+		}
+	}
+	return false;
+}
+
+float Landscape::findLanderAltitude(int i, vec3 centerPosition, float landerHeight) {
+	float xstart = landscapeVerts[2 * i];
+	float xend = landscapeVerts[2 * (i + 1)];
+	// lander is above segment
+	// find y for this x
+	float ystart = landscapeVerts[2 * i + 1];
+	float yend = landscapeVerts[2 * (i + 1) + 1];
+	float y = (yend - ystart) / (xend - xstart) * (centerPosition.x - xstart) + ystart;
+	float altitude = centerPosition.y - landerHeight*0.6 - y;
+	return altitude;
 }
 
 

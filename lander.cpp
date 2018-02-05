@@ -18,6 +18,7 @@
 #define THRUST_ACCEL 4.0                  // upon main thrust, acceleration in m/s/s
 #define GRAVITY vec3( 0, -1.6, 0 ) // gravity acceleration on the moon is 1.6 m/s/s
 #define LANDER_WIDTH 6.7                  // the real lander is about 6.7 m wide
+#define LANDER_SCALE 0.25
 
 // Set up the lander by creating a VAO and rewriting the lander
 // vertices so that the lander is centred at (0,0).
@@ -51,7 +52,8 @@ void Lander::setupVAO()
   // in a coordinate system with y increasing downward.
   
 
-  float s = 4* LANDER_WIDTH / (max.x - min.x);
+  float s = LANDER_WIDTH / (max.x - min.x);
+  landerDimensions = s*landerDimensions;
  
   mat4 modelToOriginTransform = scale( s, -s, 1 ) * translate( -(min.x+max.x)/2, -(min.y+max.y)/2, 0 );
  // mat4 modelToOriginTransform = scale(s, -s, 1) * translate(-(min.x + max.x)/4, -(min.y + max.y)/2, 0);
@@ -81,7 +83,6 @@ void Lander::setupVAO()
 
 
 // Draw the lander
-
 
 void Lander::draw( mat4 &worldToViewTransform )
 
