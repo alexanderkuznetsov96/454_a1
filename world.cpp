@@ -19,7 +19,7 @@ float zoomFactor = 2.0;
 bool gameRunning = true;
 bool gameWin = false;
 bool printResult = false;
-
+int lossReason = 0;
 
 void World::updateState(float elapsedTime)
 
@@ -62,13 +62,13 @@ void World::updateState(float elapsedTime)
 			vec3 v = lander->getVelocity();
 			if (abs(v.x) < 0.5 && abs(v.y) < 1) {
 				// check segment is flat and lander is contained
-				int r = landscape->isSegmentGoodToLand(segmentIndex, lander->getOrientation(), lander->centrePosition(), lander->getDimensions().x);
-				if (r == 0) {
+				lossReason = landscape->isSegmentGoodToLand(segmentIndex, lander->getOrientation(), lander->centrePosition(), lander->getDimensions().x);
+				if (lossReason == 0) {
 					lander->stopLander();
 					GameWin();
 				}
 				else {
-					switch (r) {
+					switch (lossReason) {
 					case 1:
 						GameOver("You attempted to land on a segment that was not flat");
 						break;
@@ -278,8 +278,19 @@ void World::draw()
 	  }
 	  // display loss screen
 	  else {
-		  ss << "Game Loss";
-		  //cout << "Game Loss" << std::endl;
+		  ss << "Game Loss:";
+		  switch (lossReason) {
+		  case 1:
+			  ss << "You attempted to land on a segment that was not flat";
+			  break;
+		  case 2:
+		  case 3:
+			  ss << "You did not fit on the surface";
+			  break;
+		  default:
+			  ss << "You crashed";
+			  break;
+		  }
 	  }
 	  drawStrokeString(ss.str(), -0.4, 0.35, 0.1, glGetUniformLocation(myGPUProgram->id(), "MVP"));
 
