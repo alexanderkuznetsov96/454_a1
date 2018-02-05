@@ -187,7 +187,6 @@ void World::draw()
   // complete transform to the vertex shader.
   landscape->draw( worldToViewTransform);
   lander->draw(worldToViewTransform);
-  lander->drawFlame(worldToViewTransform);
 
   // Draw the heads-up display (i.e. all text).
 

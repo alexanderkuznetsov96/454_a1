@@ -208,7 +208,7 @@ float Landscape::findLanderAltitude(int i, vec3 centerPosition, float landerHeig
 	float ystart = landscapeVerts[2 * i + 1];
 	float yend = landscapeVerts[2 * (i + 1) + 1];
 	float y = (yend - ystart) / (xend - xstart) * (centerPosition.x - xstart) + ystart;
-	float altitude = centerPosition.y - landerHeight*0.6 - y;
+	float altitude = centerPosition.y - landerHeight*0.5 - y;
 	return altitude;
 }
 

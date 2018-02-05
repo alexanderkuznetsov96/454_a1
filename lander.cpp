@@ -18,7 +18,6 @@
 #define THRUST_ACCEL 4.0                  // upon main thrust, acceleration in m/s/s
 #define GRAVITY vec3( 0, -1.6, 0 ) // gravity acceleration on the moon is 1.6 m/s/s
 #define LANDER_WIDTH 6.7                  // the real lander is about 6.7 m wide
-#define LANDER_SCALE 0.25
 
 // Set up the lander by creating a VAO and rewriting the lander
 // vertices so that the lander is centred at (0,0).
@@ -102,85 +101,6 @@ void Lander::draw( mat4 &worldToViewTransform )
 
 
 }
-
-void Lander::setupVAOFlame()
-
-{
-	// ---- Rewrite the lander vertices ----
-
-	// Find the bounding box of the lander
-
-	vec3 min = vec3(flameVerts[0], flameVerts[1], 0);
-	vec3 max = vec3(flameVerts[0], flameVerts[1], 0);
-	flameNumSegments = 0;
-	int i;
-	for (i = 0; flameVerts[i] != -1; i += 2) {
-		vec3 v(flameVerts[i], flameVerts[i + 1], 0);
-		if (v.x < min.x) min.x = v.x;
-		if (v.x > max.x) max.x = v.x;
-		if (v.y < min.y) min.y = v.y;
-		if (v.y > max.y) max.y = v.y;
-		flameNumSegments++;
-	}
-	flameDimensions = max - min;
-	flameNumSegments = i / 2;		// number of segments in the lander model
-
-								// Rewrite the model vertices so that the lander is centred at (0,0)
-								// and has width LANDER_WIDTH.
-								//
-								// Also, invert the y axis since the original vertices are defined
-								// in a coordinate system with y increasing downward.
-
-
-	float s = 10* LANDER_WIDTH / 3 * (max.x - min.x);
-	flameDimensions = s*flameDimensions;
-
-	mat4 modelToOriginTransform = scale(s, -s, 1) * translate(-(min.x + max.x) / 2, -(min.y + max.y) / 2, 0);
-	// mat4 modelToOriginTransform = scale(s, -s, 1) * translate(-(min.x + max.x)/4, -(min.y + max.y)/2, 0);
-
-	for (int i = 0; flameVerts[i] != -1; i += 2) {
-		vec4 newV = modelToOriginTransform * vec4(flameVerts[i], flameVerts[i + 1], 0.0, 1.0);
-		flameVerts[i] = newV.x / newV.w;
-		flameVerts[i + 1] = newV.y / newV.w;
-	}
-
-	// ---- Create a VAO for this object ----
-
-	// YOUR CODE HERE
-
-
-	glGenVertexArrays(1, &VAOflame);
-	glBindVertexArray(VAOflame);
-
-	GLuint VBO;
-	glGenBuffers(1, &VBO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, 2 * flameNumSegments * sizeof(float), &flameVerts[0], GL_STATIC_DRAW);
-
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
-}
-
-
-// Draw the flame
-
-void Lander::drawFlame(mat4 &worldToViewTransform)
-
-{
-	float x = position.x;
-	float y = position.y;
-	worldToViewTransform = worldToViewTransform * translate(x, y, 0) * rotate(orientation, vec3(0, 0, 1));
-	glBindVertexArray(VAOflame);
-
-	glUniformMatrix4fv(glGetUniformLocation(myGPUProgram->id(), "MVP"), 1, GL_TRUE, &worldToViewTransform[0][0]);
-
-	glLineWidth(2.0);
-
-	glDrawArrays(GL_LINES, 0, flameNumSegments);
-
-
-}
-
 
 
 // Update the pose (position and orientation)
@@ -278,17 +198,4 @@ float Lander::landerVerts[] = {
   189,889, 201,889,
 
   -1
-};
-
-float Lander::flameVerts[] = {
-
-	50,150, 66,50,
-	66,50, 83,83,
-	83,83, 100,16,
-	100,16, 0,16,
-	0,16, 16,83,
-	16,83, 33,50,
-	33, 50, 50, 150,
-
-	-1
 };
