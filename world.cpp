@@ -89,27 +89,7 @@ void World::updateState(float elapsedTime)
 			GameOver("You crashed");
 		}
 	}
-	else {
-		if (!printResult) {
-			startfuel = lander->fuel();
-
-			// display win screen
-			if (gameWin) {
-				cout << "Game Win" << std::endl;
-			}
-			// display loss screen
-			else {
-				cout << "Game Loss" << std::endl;
-			}
-			if (startfuel == 0) {
-				cout << "Out of fuel. Press 'n' to start new game." << std::endl;
-			}
-			else {
-				cout << "Press 's' to start new game. Press 'n' to start new game." << std::endl;
-			}
-			printResult = true;
-		}
-		
+	else {		
 		// wait for key
 		if (glfwGetKey(window, GLFW_KEY_N) == GLFW_PRESS) {
 			// start new game
@@ -126,6 +106,7 @@ void World::updateState(float elapsedTime)
 }
 
 void World::SoftReset() {
+	startfuel = lander->fuel();
 	zoomFactor = 2;
 	gameTime = 0;
 	lander->reset();
@@ -286,5 +267,27 @@ void World::draw()
 	  ss.str(std::string());
   }
   drawStrokeString(ss.str(), 0.85, 0.55, 0.06, glGetUniformLocation(myGPUProgram->id(), "MVP"), theta);
-  // YOUR CODE HERE (modify the above code, too)
+  
+  if (!gameRunning) {
+	  ss.str(std::string());
+	  // display win screen
+	  if (gameWin) {
+		  ss << "Game Win";
+	  }
+	  // display loss screen
+	  else {
+		  ss << "Game Loss";
+		  //cout << "Game Loss" << std::endl;
+	  }
+	  drawStrokeString(ss.str(), -0.95, 0.75, 0.06, glGetUniformLocation(myGPUProgram->id(), "MVP"));
+
+	  ss.str(std::string());
+	  if (startfuel == 0) {
+		  ss << "Out of fuel. Press 'n' to start new game.";
+	  }
+	  else {
+		  ss << "Press 's' to start new game. Press 'n' to start new game.";
+	  }
+	  drawStrokeString(ss.str(), -0.95, 0.75, 0.06, glGetUniformLocation(myGPUProgram->id(), "MVP"));
+  }
 }
