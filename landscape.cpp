@@ -117,17 +117,21 @@ vec3 Landscape::findClosestPoint( vec3 position, vec3 segTail, vec3 segHead )
   // the range [segTail,segHead], return the closest end of that
   // range.
 
-  // YOUR CODE HERE
+	// Create vector s for current segment
 	vec3 s = vec3(segHead.x - segTail.x, segHead.y - segTail.y, 0);
+	// Normalize s
 	vec3 S = 1 / sqrt(s.x*s.x + s.y*s.y) * s;
+	// Define vector p to point from tail of S
 	vec3 p = position - segTail; 
 	float a = p*S; 
+	// a = amount of p in the direction of s
 	if (a < 0) {
 		return segTail;
 	}
 	if (a > 1) {
 		return segHead;
 	}
+	// if a > 0 && a < 1 then p is above the line segment so return distance along segment + start of segment
 	return a*s + segTail;
 }
 
@@ -160,6 +164,7 @@ vec3 Landscape::findClosestPoint( vec3 position )
 }
 
 int Landscape::findSegmentBelow(vec3 centerPosition) {
+	// Find segment below point P
 	for (int i = 0; i < numVerts - 1; i++) {
 		int xstart = landscapeVerts[2 * i];
 		int xend = landscapeVerts[2 * (i + 1)];
@@ -171,17 +176,22 @@ int Landscape::findSegmentBelow(vec3 centerPosition) {
 }
 
 float Landscape::getSegmentWidth(int segmentIndex) {
+	// Get width of segment of landscape
 	return landscapeVerts[2 * (segmentIndex + 1)] - landscapeVerts[2 * segmentIndex];
 }
 
 int Landscape::isSegmentGoodToLand(int segmentIndex, float orientation, vec3 centerposition, float landerWidth) {
+	// Check if orientation of lander is within 5 deg of normal
 	if (abs(orientation) < 5 * 3.14 / 180) {
 		float ystart = landscapeVerts[2 * segmentIndex + 1];
 		float yend = landscapeVerts[2 * (segmentIndex + 1) + 1];
 		float xstart = landscapeVerts[2 * segmentIndex];
 		float xend = landscapeVerts[2 * (segmentIndex + 1)];
+		// Check that landing surface is flat
 		if (ystart == yend) {
+			// Check that center of lander is between extremities of segment
 			if (centerposition.x > xstart && centerposition.x < xend) {
+				// Check that lander fits on segment
 				if (centerposition.x + landerWidth / 2 < xend && centerposition.x - landerWidth / 2 > xstart) {
 					return 0;
 				}
@@ -201,13 +211,16 @@ int Landscape::isSegmentGoodToLand(int segmentIndex, float orientation, vec3 cen
 }
 
 float Landscape::findLanderAltitude(int i, vec3 centerPosition, float landerHeight) {
+	// Find altitude of lander above segment
 	float xstart = landscapeVerts[2 * i];
 	float xend = landscapeVerts[2 * (i + 1)];
 	// lander is above segment
 	// find y for this x
 	float ystart = landscapeVerts[2 * i + 1];
 	float yend = landscapeVerts[2 * (i + 1) + 1];
+	// Interpolate
 	float y = (yend - ystart) / (xend - xstart) * (centerPosition.x - xstart) + ystart;
+	// Subtract difference between y of segment and y of lander - 1/2 height of lander
 	float altitude = centerPosition.y - landerHeight*0.5 - y;
 	return altitude;
 }
