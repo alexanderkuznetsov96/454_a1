@@ -168,6 +168,7 @@ int Landscape::findSegmentBelow(vec3 centerPosition) {
 	for (int i = 0; i < numVerts - 1; i++) {
 		int xstart = landscapeVerts[2 * i];
 		int xend = landscapeVerts[2 * (i + 1)];
+		// Checking if it's x is in the bounds of the segment
 		if (centerPosition.x > xstart && centerPosition.x < xend) {
 			return i;
 		}
@@ -196,17 +197,21 @@ int Landscape::isSegmentGoodToLand(int segmentIndex, float orientation, vec3 cen
 					return 0;
 				}
 				else {
+					// Used to represent differnet errors with the landing
 					return 3;
 				}
 			}
 			else {
+				// Used to represent differnet errors with the landing
 				return 2;
 			}
 		}
 		else {
+			// Used to represent differnet errors with the landing
 			return 1;
 		}
 	}
+	// Used to represent differnet errors with the landing
 	return false;
 }
 

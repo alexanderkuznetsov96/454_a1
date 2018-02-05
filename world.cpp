@@ -18,7 +18,6 @@ int startfuel = INITIAL_FUEL;
 float zoomFactor = 2.0;
 bool gameRunning = true;
 bool gameWin = false;
-bool printResult = false;
 int lossReason = 0;
 
 void World::updateState(float elapsedTime)
@@ -68,6 +67,7 @@ void World::updateState(float elapsedTime)
 					GameWin();
 				}
 				else {
+					// Report why they lost
 					switch (lossReason) {
 					case 1:
 						GameOver("You attempted to land on a segment that was not flat");
@@ -109,29 +109,38 @@ void World::updateState(float elapsedTime)
 }
 
 void World::SoftReset() {
+	// Set the starting fuel to current fuel
 	startfuel = lander->fuel();
+	// Reset zoom factor to default
 	zoomFactor = 2;
+	// Reset game time
 	gameTime = 0;
+	// reset the lander velocity and position
 	lander->reset();
+	// set game to run again
 	gameRunning = true;
-	printResult = false;
 }
 
 void World::HardReset() {
+	// Soft reset
 	SoftReset();
+	// reset the score
 	score = 0;
-	gameTime = 0;
+	// reset the fuel
 	startfuel = INITIAL_FUEL;
 	lander->resetFuel();
 }
 
 void World::GameWin() {
+	// Game needs to stop
 	gameRunning = false;
 	gameWin = true;
+	// Calculate and add score, score is split 30% for time to land, 30% for fuel used, 40% for size of platform landed on
 	score += 300 - gameTime  + 300 * (startfuel - lander->fuel()) / startfuel*10 + 400 * lander->getDimensions().y / landscape->getSegmentWidth(landscape->findSegmentBelow(lander->centrePosition()));
 }
 
 void World::GameOver(string reason) {
+	// Game needs to stop
 	gameRunning = false;
 	gameWin = false;
 }
@@ -150,7 +159,7 @@ void World::draw()
     // of the screen (BOTTOM_SPACE is in viewing coordinates).
 
     float s = zoomFactor / (landscape->maxX() - landscape->minX());
-
+	// Increase the zoom factor until it is 2 while staying centered on the lander
 	if (zoomFactor > 2) {
 		zoomFactor -= 0.05;
 		worldToViewTransform
@@ -171,13 +180,13 @@ void World::draw()
 
     // YOUR CODE HERE
 
-	  // Adjusting 2 will "Zoom" in and out
+	  // Adjusting increase the zoom view until it reaches the set max
 	  if (zoomFactor < landscape->maxX()/ZOOM_RADIUS) {
 		  zoomFactor += 0.05;
 	  }
 	  float s = zoomFactor / (landscape->maxX() - landscape->minX());
 
-	// Need to adjust the translate fucntions to translate around the lander
+	// Set the transform for the lander into the world
 	  worldToViewTransform
 		  = translate(0, BOTTOM_SPACE, 0)
 		  * scale(s, s, 1)
@@ -194,21 +203,22 @@ void World::draw()
   // Draw the heads-up display (i.e. all text).
 
   stringstream ss;
-
+  // Draw the title
   drawStrokeString( "LUNAR LANDER", -0.4, 0.85, 0.1, glGetUniformLocation( myGPUProgram->id(), "MVP") );
 
   ss.setf( ios::fixed, ios::floatfield );
   ss.precision(1);
-
+  // Draw the score with placeholder 0's
   ss << "SCORE ";
   for (int i = 1000; i >= 1; i /= 10) {
 	  ss << (score % (i * 10)) / i;
   };
   drawStrokeString( ss.str(), -0.95, 0.75, 0.05, glGetUniformLocation( myGPUProgram->id(), "MVP") );
-
+  // finding the number of minutes and seconds
   int m = (int)(gameTime / 60);
   int s = (int)gameTime % 60;
   stringstream time;
+  // Draw the time with place holder 0's and split for minutes
   time << "TIME ";
   if (m < 10) {
 	  time << "0";
@@ -221,6 +231,7 @@ void World::draw()
   drawStrokeString(time.str(), -0.95, 0.65, 0.05, glGetUniformLocation(myGPUProgram->id(), "MVP"));
 
   ss.str(std::string());
+  // Draw the fuel level with placeholder 0's
   ss << "FUEL ";
   for (int i = 1000; i >= 1; i /= 10) {
 	  ss << (lander->fuel() % (i*10)) / i;
@@ -229,16 +240,20 @@ void World::draw()
 
   ss.str(std::string());
   ss.precision(2);
+  // Draw the altitude with percision 2 as it helps player see how close they are
   ss << "ALTITUDE " << altitude;
   drawStrokeString(ss.str(), 0.1, 0.75, 0.05, glGetUniformLocation(myGPUProgram->id(), "MVP"));
 
   ss.str(std::string());
   ss.precision(1);
   float vx = lander->getVelocity().x;
+  // Display the horizontal speed
   ss << "HORIZONTAL SPEED " << abs(vx);
   drawStrokeString(ss.str(), 0.1, 0.65, 0.05, glGetUniformLocation(myGPUProgram->id(), "MVP"));
+  // Draw the arrow which is \a overwritten in fg_stroke
   ss.str("\a");
   float theta = 0;
+  // Adjust the angle it points at by the direction its going
   if (vx > 0) {
 	  // draw right arrow
 	  theta = -M_PI/2;
@@ -250,13 +265,16 @@ void World::draw()
   else {
 	  ss.str(std::string());
   }
-  drawStrokeString(ss.str(), 0.90, 0.65, 0.05, glGetUniformLocation(myGPUProgram->id(), "MVP"), theta);
+  drawStrokeString(ss.str(), 0.90, 0.67, 0.05, glGetUniformLocation(myGPUProgram->id(), "MVP"), theta);
 
   ss.str(std::string());
   float vy = lander->getVelocity().y;
+  // Display the vertical speed
   ss << "VERTICAL SPEED " << abs(vy);
   drawStrokeString(ss.str(), 0.1, 0.55, 0.05, glGetUniformLocation(myGPUProgram->id(), "MVP"));
+  // Draw the arrow which is \a overwritten in fg_stroke
   ss.str("\a");
+  // Adjust the angle it points at by the direction its going
   if (vy > 0) {
 	  // draw down arrow
 	  theta = 0;
@@ -268,13 +286,17 @@ void World::draw()
   else {
 	  ss.str(std::string());
   }
-  drawStrokeString(ss.str(), 0.90, 0.55, 0.05, glGetUniformLocation(myGPUProgram->id(), "MVP"), theta);
-  
+  drawStrokeString(ss.str(), 0.90, 0.57, 0.05, glGetUniformLocation(myGPUProgram->id(), "MVP"), theta);
+  // Check if the game is in running mode
+  float pos = -0.4;
+  float size = 0.05;
   if (!gameRunning) {
 	  ss.str(std::string());
 	  // display win screen
 	  if (gameWin) {
 		  ss << "Game Win";
+		  pos = -0.3;
+		  size = 0.1;
 	  }
 	  // display loss screen
 	  else {
@@ -292,8 +314,8 @@ void World::draw()
 			  break;
 		  }
 	  }
-	  drawStrokeString(ss.str(), -0.4, 0.35, 0.1, glGetUniformLocation(myGPUProgram->id(), "MVP"));
-
+	  drawStrokeString(ss.str(), pos, 0.35, size, glGetUniformLocation(myGPUProgram->id(), "MVP"));
+	  // Print the game options for continue game or new game
 	  ss.str(std::string());
 	  if (startfuel == 0) {
 		  ss << "Out of fuel. Press 'n' to start new game.";
@@ -301,6 +323,6 @@ void World::draw()
 	  else {
 		  ss << "Press 's' to continue game. Press 'n' to start new game.";
 	  }
-	  drawStrokeString(ss.str(), -0.85, 0.25, 0.04, glGetUniformLocation(myGPUProgram->id(), "MVP"));
+	  drawStrokeString(ss.str(), -0.75, 0.25, 0.04, glGetUniformLocation(myGPUProgram->id(), "MVP"));
   }
 }

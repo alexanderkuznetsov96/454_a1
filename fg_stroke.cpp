@@ -30,21 +30,22 @@
 
 #include "strokefont.h"
 
-/* char: 0x07 */
+/* char: 0x07 also is \a*/
+// Creating the arrow body
 static const SFG_StrokeVertex ch7st0[] =
 {
 	{ 0,0 },
 	{ 0,-100},
 	{ 0, 100}
 };
-
+// Creating the arrow tip
 static const SFG_StrokeVertex ch7st1[] =
 {
 	{ -50, 50 },
 	{ 0, 100 },
 	{ 50, 50},
 };
-
+// Combining the arrow parts
 static const SFG_StrokeStrip ch7st[] =
 {
 	{ 3,ch7st0 },
