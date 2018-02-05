@@ -125,7 +125,7 @@ void World::HardReset() {
 void World::GameWin() {
 	gameRunning = false;
 	gameWin = true;
-	score += 300 - gameTime * 5 + 300 * (startfuel - lander->fuel()) / startfuel + 400 * lander->getDimensions().y / landscape->getSegmentWidth(landscape->findSegmentBelow(lander->centrePosition()));
+	score += 300 - gameTime  + 300 * (startfuel - lander->fuel()) / startfuel*10 + 400 * lander->getDimensions().y / landscape->getSegmentWidth(landscape->findSegmentBelow(lander->centrePosition()));
 }
 
 void World::GameOver(string reason) {
@@ -187,13 +187,13 @@ void World::draw()
   // complete transform to the vertex shader.
   landscape->draw( worldToViewTransform);
   lander->draw(worldToViewTransform);
-  
+  lander->drawFlame(worldToViewTransform);
 
   // Draw the heads-up display (i.e. all text).
 
   stringstream ss;
 
-  drawStrokeString( "LUNAR LANDER", -0.2, 0.85, 0.06, glGetUniformLocation( myGPUProgram->id(), "MVP") );
+  drawStrokeString( "LUNAR LANDER", -0.4, 0.85, 0.1, glGetUniformLocation( myGPUProgram->id(), "MVP") );
 
   ss.setf( ios::fixed, ios::floatfield );
   ss.precision(1);
@@ -202,7 +202,7 @@ void World::draw()
   for (int i = 1000; i >= 1; i /= 10) {
 	  ss << (score % (i * 10)) / i;
   };
-  drawStrokeString( ss.str(), -0.95, 0.75, 0.06, glGetUniformLocation( myGPUProgram->id(), "MVP") );
+  drawStrokeString( ss.str(), -0.95, 0.75, 0.05, glGetUniformLocation( myGPUProgram->id(), "MVP") );
 
   int m = (int)(gameTime / 60);
   int s = (int)gameTime % 60;
@@ -216,25 +216,25 @@ void World::draw()
 	  time << "0";
   }
   time << s;
-  drawStrokeString(time.str(), -0.95, 0.65, 0.06, glGetUniformLocation(myGPUProgram->id(), "MVP"));
+  drawStrokeString(time.str(), -0.95, 0.65, 0.05, glGetUniformLocation(myGPUProgram->id(), "MVP"));
 
   ss.str(std::string());
   ss << "FUEL ";
   for (int i = 1000; i >= 1; i /= 10) {
 	  ss << (lander->fuel() % (i*10)) / i;
   }
-  drawStrokeString(ss.str(), -0.95, 0.55, 0.06, glGetUniformLocation(myGPUProgram->id(), "MVP"));
+  drawStrokeString(ss.str(), -0.95, 0.55, 0.05, glGetUniformLocation(myGPUProgram->id(), "MVP"));
 
   ss.str(std::string());
-  ss.precision(3);
+  ss.precision(2);
   ss << "ALTITUDE " << altitude;
-  drawStrokeString(ss.str(), -0.1, 0.75, 0.06, glGetUniformLocation(myGPUProgram->id(), "MVP"));
+  drawStrokeString(ss.str(), 0.1, 0.75, 0.05, glGetUniformLocation(myGPUProgram->id(), "MVP"));
 
   ss.str(std::string());
   ss.precision(1);
   float vx = lander->getVelocity().x;
   ss << "HORIZONTAL SPEED " << abs(vx);
-  drawStrokeString(ss.str(), -0.1, 0.65, 0.06, glGetUniformLocation(myGPUProgram->id(), "MVP"));
+  drawStrokeString(ss.str(), 0.1, 0.65, 0.05, glGetUniformLocation(myGPUProgram->id(), "MVP"));
   ss.str("\a");
   float theta = 0;
   if (vx > 0) {
@@ -248,12 +248,12 @@ void World::draw()
   else {
 	  ss.str(std::string());
   }
-  drawStrokeString(ss.str(), 0.85, 0.65, 0.06, glGetUniformLocation(myGPUProgram->id(), "MVP"), theta);
+  drawStrokeString(ss.str(), 0.90, 0.65, 0.05, glGetUniformLocation(myGPUProgram->id(), "MVP"), theta);
 
   ss.str(std::string());
   float vy = lander->getVelocity().y;
   ss << "VERTICAL SPEED " << abs(vy);
-  drawStrokeString(ss.str(), -0.1, 0.55, 0.06, glGetUniformLocation(myGPUProgram->id(), "MVP"));
+  drawStrokeString(ss.str(), 0.1, 0.55, 0.05, glGetUniformLocation(myGPUProgram->id(), "MVP"));
   ss.str("\a");
   if (vy > 0) {
 	  // draw down arrow
@@ -266,7 +266,7 @@ void World::draw()
   else {
 	  ss.str(std::string());
   }
-  drawStrokeString(ss.str(), 0.85, 0.55, 0.06, glGetUniformLocation(myGPUProgram->id(), "MVP"), theta);
+  drawStrokeString(ss.str(), 0.90, 0.55, 0.05, glGetUniformLocation(myGPUProgram->id(), "MVP"), theta);
   
   if (!gameRunning) {
 	  ss.str(std::string());
@@ -279,15 +279,15 @@ void World::draw()
 		  ss << "Game Loss";
 		  //cout << "Game Loss" << std::endl;
 	  }
-	  drawStrokeString(ss.str(), -0.95, 0.75, 0.06, glGetUniformLocation(myGPUProgram->id(), "MVP"));
+	  drawStrokeString(ss.str(), -0.4, 0.35, 0.1, glGetUniformLocation(myGPUProgram->id(), "MVP"));
 
 	  ss.str(std::string());
 	  if (startfuel == 0) {
 		  ss << "Out of fuel. Press 'n' to start new game.";
 	  }
 	  else {
-		  ss << "Press 's' to start new game. Press 'n' to start new game.";
+		  ss << "Press 's' to continue game. Press 'n' to start new game.";
 	  }
-	  drawStrokeString(ss.str(), -0.95, 0.75, 0.06, glGetUniformLocation(myGPUProgram->id(), "MVP"));
+	  drawStrokeString(ss.str(), -0.85, 0.25, 0.04, glGetUniformLocation(myGPUProgram->id(), "MVP"));
   }
 }

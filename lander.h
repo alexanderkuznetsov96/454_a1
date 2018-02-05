@@ -14,9 +14,12 @@
 class Lander {
 
   static float landerVerts[];	// lander segments as vertex pairs
+  static float flameVerts[];
   int numSegments;		// number of line segments in the lander model
+  int flameNumSegments;
   
   GLuint VAO;			// VAO for lander geometry
+  GLuint VAOflame;
 
   vec3 position;		// position in world coordinates (m)
   vec3 velocity;		// velocity in world coordinates (m/s)
@@ -29,6 +32,7 @@ class Lander {
   int fuelLevel;
 
   vec3 landerDimensions;
+  vec3 flameDimensions;
 
  public:
 
@@ -38,6 +42,7 @@ class Lander {
 	resetFuel();
     reset();
     setupVAO();
+	setupVAOFlame();
   };
 
   void resetFuel() { fuelLevel = INITIAL_FUEL; }
@@ -45,6 +50,10 @@ class Lander {
   void setupVAO();  
 
   void draw( mat4 &worldToViewTransform );
+
+  void setupVAOFlame();
+
+  void drawFlame(mat4 & worldToViewTransform);
 
   void updatePose( float deltaT );
 
